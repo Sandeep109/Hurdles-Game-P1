@@ -1,0 +1,56 @@
+class Game {
+  constructor(){}
+  
+  getState(){
+    var gameStateRef  = database.ref('gameState');
+    gameStateRef.on("value",function(data){
+       gameState = data.val();
+    })
+   
+  }
+
+  update(state){
+    database.ref('/').update({
+      gameState: state
+    });
+  }
+
+  async start(){
+    if(gameState === 0){
+      player = new Player();
+      var palyerCRef = await database.ref('playerCount').once("value");
+      if(palyerCRef.exists()){
+        playerCount = palyerCRef.val();
+        player.getCount();
+      }
+
+      form = new Form()
+      form.display();
+    }
+  }
+  play(){
+    form.hide();
+    textSize(30);
+    text("GAME START",120,100);
+    Player.getPlayerInfo();
+    if(allP !== undefined ){
+      var display_Position = 130;
+      for(var plr in allP){
+        if(plr === "player"+player.index)
+        fill("red");
+        else{
+          fill("black");
+        }
+        display_Position += 20;
+        textSize(15);
+        text(allP[plr].name + " : " + allP[plr].distance,120,display_Position); 
+      }
+    }
+    if(keyIsDown(UP_ARROW) && player.index !== null){
+      player.distance +=50;
+      player.update(); 
+    }
+
+
+  }
+}
